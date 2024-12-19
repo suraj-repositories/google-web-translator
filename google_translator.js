@@ -1,3 +1,29 @@
+// -----------------------------------------------------
+// BEGIN - GOOGLE TRANSLATOR CONFIG -   
+//------------------------------------------------------
+
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+        {
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,de,it',
+        },
+        'google_translate_element'   // REMEMBER : if you change this you have to change the css also : relace this name to your given name
+    );
+    const element = document.querySelector('.skiptranslate.goog-te-gadget');
+    const selectElement = element.querySelector('div');
+    element.innerHTML = "";
+    element.appendChild(selectElement);
+   
+    selectElement.querySelector('select').addEventListener('change', ()=>{
+        document.body.classList.add('transator-top-0')
+    });
+
+    document.querySelector('skiptranslate').parentNode.classList.add('translator-display-none');
+}
+// -----------------------------------------------------
+// END - GOOGLE TRANSLATOR CONFIG 
+//------------------------------------------------------
 
 
 // go/mss-setup#7-load-the-js-or-css-from-your-initial-page

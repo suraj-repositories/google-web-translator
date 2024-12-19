@@ -12,18 +12,11 @@
     
 </head>
 
-<body>
-   <div class="container mt-3">
-    <select class="form-select" aria-label="Default select example">
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-      </select>
-    <br><br>
+<body style="padding: 20px;">
+   
 
     <div id="google_translate_element"></div>
-
+    <br>
     <div>
         The personal and the autobiographical: The essayists that feel most comfortable in this pole "write fragments of
         reflective autobiography and look at the world through the keyhole of anecdote and description".
@@ -34,37 +27,15 @@
         The abstract-universal: In this pole "we find those essayists who do their work in the world of high
         abstractions", who are never personal and who seldom mention the particular facts of experience.
     </div>
-   </div>
+    
+    <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos dicta, temporibus natus iure excepturi fuga at iusto aut atque obcaecati.</div>
 
+    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus amet, pariatur provident deleniti eveniet delectus facere asperiores. Optio cum fugit at eum quaerat, animi numquam, impedit, porro explicabo vero facilis possimus nisi delectus sed? Nemo est quo, odit omnis expedita nobis harum eligendi voluptatibus labore. Magni, exercitationem! Laudantium, debitis voluptates!</div>
    
    <script src="google_translator.js"></script>
     <script>
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement(
-                {
-                    pageLanguage: 'en',
-                    includedLanguages: 'en,es,fr,de,it',
-                },
-                'google_translate_element'
-            );
-            const element = document.querySelector('.skiptranslate.goog-te-gadget');
-            const selectElement = element.querySelector('div');
-            element.innerHTML = "";
-            element.appendChild(selectElement);
-           
-            selectElement.querySelector('select').addEventListener('change', ()=>{
-                document.body.classList.add('transator-top-0')
-            });
+            </script>
 
-            document.querySelector('skiptranslate').parentNode.classList.add('translator-display-none');
-        }
-    </script>
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>
