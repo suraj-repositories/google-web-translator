@@ -14,8 +14,8 @@ function googleTranslateElementInit() {
     const selectElement = element.querySelector('div');
     element.innerHTML = "";
     element.appendChild(selectElement);
-   
-    selectElement.querySelector('select').addEventListener('change', ()=>{
+
+    selectElement.querySelector('select').addEventListener('change', () => {
         document.body.classList.add('transator-top-0')
     });
 
