@@ -17,8 +17,8 @@ const translatorElement = document.getElementById(ORANBYTE_GOOGLE_TRANSLATOR_ID)
 const rawRootStyle = translatorElement?.getAttribute('data-lang-root-style');
 const rawListStyle = translatorElement?.getAttribute('data-lang-list-style');
 
-const languagesRootStyle = LANGUAGE_STYLES.includes(rawRootStyle) ? rawRootStyle : 'code';
-const languagesListStyle = LANGUAGE_STYLES.includes(rawListStyle) ? rawListStyle : 'code';
+const languagesRootStyle = LANGUAGE_STYLES.includes(rawRootStyle) ? rawRootStyle : 'code-flag';
+const languagesListStyle = LANGUAGE_STYLES.includes(rawListStyle) ? rawListStyle : 'code-flag';
 
 // Load user defined default language
 let defaultSelectedLanguage;
