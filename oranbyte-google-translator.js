@@ -1,26 +1,211 @@
+
+const DEFAULT_LANGUAGE = 'en';
+const LANGUAGES = ['en', 'ar', 'hi', 'es', 'fr', 'de', 'it'];
+const LANGUAGE_STYLES = ['code', 'text', 'flag', 'code-flag', 'text-flag'];
+const ORANBYTE_GOOGLE_TRANSLATOR_ID = 'oranbyte-google-translator';
+
+
 // -----------------------------------------------------
-// BEGIN - GOOGLE TRANSLATOR CONFIG -   
-//------------------------------------------------------
+// BEGIN - GOOGLE TRANSLATOR CONFIG -
+// -----------------------------------------------------
+
+const pageTranslateElementId = "google_translate_element";
+var selectedLang = localStorage.getItem('selectedLang');
+
+const translatorElement = document.getElementById(ORANBYTE_GOOGLE_TRANSLATOR_ID);
+
+const rawRootStyle = translatorElement?.getAttribute('data-lang-root-style');
+const rawListStyle = translatorElement?.getAttribute('data-lang-list-style');
+
+const languagesRootStyle = LANGUAGE_STYLES.includes(rawRootStyle) ? rawRootStyle : 'code';
+const languagesListStyle = LANGUAGE_STYLES.includes(rawListStyle) ? rawListStyle : 'code';
+
+// Load user defined default language
+let defaultSelectedLanguage;
+
+if (selectedLang) {
+    defaultSelectedLanguage = selectedLang;
+} else {
+    const defaultLangFromElement = translatorElement?.getAttribute('data-default-lang');
+    defaultSelectedLanguage = defaultLangFromElement || DEFAULT_LANGUAGE;
+}
+
+// load allowed languages
+
+let availableLanguages = [];
+
+const languagesData = translatorElement?.getAttribute('data-languages');
+
+if (languagesData) {
+    availableLanguages = languagesData.split(',').map(lang => lang.trim()).filter(lang => LANGUAGES.includes(lang));
+}
+
+availableLanguages = availableLanguages.length > 0 ? availableLanguages : LANGUAGES;
+
+// current URL 
+const scripts = document.getElementsByTagName('script');
+const currentScript = scripts[scripts.length - 1].src;
+const scriptDir = currentScript.substring(0, currentScript.lastIndexOf('/'));
+
 
 function googleTranslateElementInit() {
+    const pageTranslateElement = pageTranslateElementId;
+    addGoogleTranslateElement(pageTranslateElement);
+
     new google.translate.TranslateElement(
         {
-            pageLanguage: 'en',
-            includedLanguages: 'en,es,fr,de,it',
+            includedLanguages: availableLanguages.join(','),
         },
-        'google_translate_element'   // REMEMBER : if you change this you have to change the css also : relace this name to your given name
+        pageTranslateElement
     );
-    const element = document.querySelector('.skiptranslate.goog-te-gadget');
-    const selectElement = element.querySelector('div');
-    element.innerHTML = "";
-    element.appendChild(selectElement);
 
-    selectElement.querySelector('select').addEventListener('change', () => {
-        document.body.classList.add('transator-top-0')
+    const interval = setInterval(() => {
+
+        const element = document.querySelector('.skiptranslate.goog-te-gadget');
+        const selectElement = element?.querySelector('.goog-te-combo');
+
+        if (selectElement && selectElement.options.length > 1) {
+            clearInterval(interval);
+
+            let languages = [];
+            selectElement.querySelectorAll('option').forEach(option => {
+                if (option.value === '') return;
+                languages.push({ option: option.textContent, code: option.value });
+            });
+
+            const storedLangCode = localStorage.getItem('selectedLang') || defaultSelectedLanguage;
+            const selectedLang = languages.find(l => l.code === storedLangCode) || languages[0];
+
+            setTimeout(() => {
+                createUI(selectedLang.code, selectedLang.option, languages);
+            }, 0);
+
+            invisibleSkipTranslate();
+            changeLanguage(defaultSelectedLanguage);
+            removeExtraStylesFromBody();
+        }
+    }, 50);
+}
+
+function changeLanguage(langCode) {
+    const select = document.querySelector('.goog-te-combo');
+    if (select) {
+        select.value = langCode;
+        const event = new Event('change');
+        select.dispatchEvent(event);
+
+        localStorage.setItem('selectedLang', langCode);
+
+        const selectElement = document.querySelector("#" + pageTranslateElementId + " select");
+        let languages = [];
+        selectElement.querySelectorAll('option').forEach(option => {
+            if (option.value === '') return;
+            languages.push({ option: option.textContent, code: option.value });
+        });
+
+        const selectedLang = languages.find(lang => lang.code === langCode);
+        if (selectedLang) {
+            createUI(selectedLang.code, selectedLang.option, languages);
+        } else {
+            createUI(langCode, 'Language', languages);
+        }
+    } else {
+        console.warn('Translate dropdown not found.');
+    }
+}
+
+function createUI(defaultLangCode = defaultSelectedLanguage, defaultLangLabel = 'English', languages = LANGUAGES) {
+    const translatorDiv = document.createElement('div');
+    translatorDiv.className = 'oranbyte-translator dropdown notranslate';
+
+    const label = document.createElement('label');
+    label.setAttribute('for', 'dropdown-toggle');
+    label.className = 'dropbtn' + (languagesRootStyle === 'flag' ? '' : ' lang-name');
+
+    const spanLabel = document.createElement('span');
+    spanLabel.className = 'language';
+    if (languagesRootStyle == "text" || languagesRootStyle == "text-flag") {
+        spanLabel.textContent = defaultLangLabel;
+    } else if (languagesRootStyle == "code" || languagesRootStyle == "code-flag") {
+        spanLabel.textContent = defaultLangCode.toUpperCase();
+    }
+
+    if (languagesRootStyle != 'code' && languagesRootStyle != 'text') {
+        const imgLabel = document.createElement('img');
+        imgLabel.src = scriptDir + '/flags/' + defaultLangCode + '.svg';
+        imgLabel.alt = '';
+        label.appendChild(imgLabel);
+    }
+
+    label.appendChild(spanLabel);
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'dropdown-toggle';
+
+    checkbox.addEventListener('click', (e) => {
+        e.stopPropagation();
     });
 
-    document.querySelector('skiptranslate').parentNode.classList.add('translator-display-none');
+    window.addEventListener('click', () => {
+        checkbox.checked = false;
+    });
+
+    const ul = document.createElement('ul');
+    ul.className = 'dropdown-content' + (languagesListStyle === 'flag' ? ' lang-flag' : (languagesListStyle === 'text' ? ' lang-text-flag' : ' lang-code-flag'));
+
+    languages.forEach(lang => {
+        const li = document.createElement('li');
+        li.addEventListener('click', () => {
+            changeLanguage(lang.code);
+            checkbox.checked = false;
+        });
+
+        const span = document.createElement('span');
+
+        if (languagesListStyle == "text" || languagesListStyle == "text-flag") {
+            span.textContent = lang.option;
+        } else if (languagesListStyle == "code" || languagesListStyle == "code-flag") {
+            span.textContent = lang.code.toUpperCase();
+        }
+
+
+        if (languagesListStyle != "code" && languagesListStyle != "text") {
+            const img = document.createElement('img');
+            img.src = scriptDir + '/flags/' + lang.code + '.svg';
+            img.alt = '';
+            li.appendChild(img);
+        }
+
+        li.appendChild(span);
+        ul.appendChild(li);
+    });
+
+    translatorDiv.appendChild(label);
+    translatorDiv.appendChild(checkbox);
+    translatorDiv.appendChild(ul);
+
+    const container = document.querySelector('#oranbyte-google-translator');
+    container.innerHTML = '';
+    container.appendChild(translatorDiv);
 }
+
+function invisibleSkipTranslate() {
+    const skipTranlate = document.querySelector('skiptranslate');
+    if (!skipTranlate?.parentNode) return;
+    skipTranlate.parentNode.classList.add('translator-display-none');
+}
+
+function addGoogleTranslateElement(id) {
+    const googleTranslateElement = document.createElement('div');
+    googleTranslateElement.id = id;
+    document.body.appendChild(googleTranslateElement);
+}
+
+function removeExtraStylesFromBody() {
+    document.body.removeAttribute('style');
+}
+
 // -----------------------------------------------------
 // END - GOOGLE TRANSLATOR CONFIG 
 //------------------------------------------------------
