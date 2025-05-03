@@ -109,6 +109,7 @@ function changeLanguage(langCode) {
         } else {
             createUI(langCode, 'Language', languages);
         }
+        removeExtraStylesFromBody();
     } else {
         console.warn('Translate dropdown not found.');
     }
@@ -188,6 +189,7 @@ function createUI(defaultLangCode = defaultSelectedLanguage, defaultLangLabel = 
     const container = document.querySelector('#oranbyte-google-translator');
     container.innerHTML = '';
     container.appendChild(translatorDiv);
+    removeExtraStylesFromBody();
 }
 
 function invisibleSkipTranslate() {
