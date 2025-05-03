@@ -43,10 +43,8 @@ if (languagesData) {
 availableLanguages = availableLanguages.length > 0 ? availableLanguages : LANGUAGES;
 
 // current URL 
-const scripts = document.getElementsByTagName('script');
-const currentScript = scripts[scripts.length - 1].src;
-const scriptDir = currentScript.substring(0, currentScript.lastIndexOf('/'));
-
+const currentScript = document.currentScript?.src;
+const scriptDir = currentScript?.substring(0, currentScript.lastIndexOf('/'));
 
 function googleTranslateElementInit() {
     const pageTranslateElement = pageTranslateElementId;
@@ -59,6 +57,7 @@ function googleTranslateElementInit() {
         pageTranslateElement
     );
 
+    removeExtraStylesFromBody();
     const interval = setInterval(() => {
 
         const element = document.querySelector('.skiptranslate.goog-te-gadget');
@@ -78,11 +77,12 @@ function googleTranslateElementInit() {
 
             setTimeout(() => {
                 createUI(selectedLang.code, selectedLang.option, languages);
+                
             }, 0);
 
             invisibleSkipTranslate();
             changeLanguage(defaultSelectedLanguage);
-            removeExtraStylesFromBody();
+          
         }
     }, 50);
 }
@@ -109,7 +109,7 @@ function changeLanguage(langCode) {
         } else {
             createUI(langCode, 'Language', languages);
         }
-        removeExtraStylesFromBody();
+        
     } else {
         console.warn('Translate dropdown not found.');
     }
@@ -189,7 +189,7 @@ function createUI(defaultLangCode = defaultSelectedLanguage, defaultLangLabel = 
     const container = document.querySelector('#oranbyte-google-translator');
     container.innerHTML = '';
     container.appendChild(translatorDiv);
-    removeExtraStylesFromBody();
+    
 }
 
 function invisibleSkipTranslate() {
@@ -202,10 +202,17 @@ function addGoogleTranslateElement(id) {
     const googleTranslateElement = document.createElement('div');
     googleTranslateElement.id = id;
     document.body.appendChild(googleTranslateElement);
+    
 }
 
 function removeExtraStylesFromBody() {
-    document.body.removeAttribute('style');
+    const interval = setInterval(() => {
+        const body = document.body;
+        if (body.hasAttribute('style')) {
+            body.removeAttribute('style');
+            clearInterval(interval);
+        }
+    }, 50);    
 }
 
 // -----------------------------------------------------
@@ -224,16 +231,7 @@ if (!window['_DumpException']) {
     var window = this;
     try {
         _._F_toggles_initialize = function (a) { (typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this)._F_toggles = a || [] }; (0, _._F_toggles_initialize)([0x60c,]);
-        /*
-        
-         Copyright The Closure Library Authors.
-         SPDX-License-Identifier: Apache-2.0
-        */
-        /*
-        
-         Copyright Google LLC
-         SPDX-License-Identifier: Apache-2.0
-        */
+       
         var ca, fa, ta, za, Ca, Da, Ea, Ha, Ia, Ja, La, ab, lb, ob, pb, qb, w, sb, tb, vb, zb, Bb, Cb, Db; _.ba = function (a, b) { if (Error.captureStackTrace) Error.captureStackTrace(this, _.ba); else { var c = Error().stack; c && (this.stack = c) } a && (this.message = String(a)); b !== void 0 && (this.cause = b) }; ca = function (a, b) { a = a.split("%s"); for (var c = "", d = a.length - 1, e = 0; e < d; e++)c += a[e] + (e < b.length ? b[e] : "%s"); _.ba.call(this, c + a[d]) }; fa = function (a) { if (_.da) a(_.da); else { var b; ((b = ea) != null ? b : ea = []).push(a) } }; _.ja = function () { !_.da && _.ha && _.ia(); return _.da };
         _.ia = function () { _.da = _.ha(); var a; (a = ea) == null || a.forEach(fa); ea = void 0 }; _.la = function (a) { _.da && ka(a) }; _.oa = function () { _.da && ma(_.da) }; _.qa = function (a, b) { b.hasOwnProperty("displayName") || (b.displayName = a.toString()); b[pa] = a }; _.ra = function (a) { a && typeof a.dispose == "function" && a.dispose() }; ta = function (a) { for (var b = 0, c = arguments.length; b < c; ++b) { var d = arguments[b]; _.sa(d) ? ta.apply(null, d) : _.ra(d) } }; _.va = function (a, b) { return (0, _.ua)(a, b) >= 0 }; _.wa = function (a, b) { _.va(a, b) || a.push(b) };
         _.xa = function (a, b) { b = (0, _.ua)(a, b); var c; (c = b >= 0) && Array.prototype.splice.call(a, b, 1); return c }; _.ya = function (a) { var b = a.length; if (b > 0) { for (var c = Array(b), d = 0; d < b; d++)c[d] = a[d]; return c } return [] }; za = function (a, b) { for (var c = 1; c < arguments.length; c++) { var d = arguments[c]; if (_.sa(d)) { var e = a.length || 0, f = d.length || 0; a.length = e + f; for (var g = 0; g < f; g++)a[e + g] = d[g] } else a.push(d) } };
